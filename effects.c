@@ -1,6 +1,8 @@
 #include "effects.h"
 
 static unsigned char color_index;
+volatile EffectMode_t current_effect = EFFECT_SLOW_FLASH;
+unsigned char g_color_index;
 
 // 红、蓝、绿、橙、青、紫、黄、粉红、天蓝、混白 (PIN.md 顺序)
 static const unsigned char color_tbl[] = {
@@ -18,10 +20,13 @@ static const unsigned char color_tbl[] = {
 
 void effects_init(void) {
     color_index = 9;
+    g_color_index = color_index;
+    current_effect = EFFECT_SLOW_FLASH;
 }
 
 void effects_next_color(void) {
     if (++color_index >= 10) color_index = 0;
+    g_color_index = color_index;
 }
 
 void effects_apply(RGB_t *leds) {

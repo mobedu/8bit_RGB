@@ -84,18 +84,18 @@
 car-rgb/
 ├── main.c              # 主程序
 ├── config.h            # 配置定义
-├── effects_new.c/h     # LED 效果
-├── battery.c/h         # 电池检测
-├── rf433.c/h           # RF433 遥控
-├── vibration.c/h       # 震动开关
+├── effects.c/h         # LED 效果
+├── effects_new.c/h     # 新版 LED 效果（开发中）
+├── key.c/h             # 按键扫描
 ├── power.c/h           # 电源管理
-├── iservices.c/h       # 中断服务
-├── ws2812.h            # WS2812B 头文件
+├── ws2812.c/h          # WS2812B 驱动
 ├── doc/                # 开发文档
-│   ├── RF433_REMOTE_SPEC.md    # 遥控器功能
-│   ├── PERIPHERAL_INTEGRATION.md # 外设集成
+│   ├── README.md       # 文档索引
+│   ├── LESSONS_LEARNED.md      # 踩坑记录
+│   ├── BUG_FIX_WORKFLOW.md     # BUG修复流程
 │   └── ...
-└── README.md           # 项目说明
+├── README.md           # 项目说明（本文件）
+└── README_DEV.md       # 开发文档入口
 ```
 
 ## 注意事项
@@ -105,9 +105,29 @@ car-rgb/
 3. **电池分压**: RA2 需要 100k/47k 分压电阻
 4. **RF433 天线**: 17cm 铜线作为天线
 5. **震动开关**: 需要 10k-100k 下拉电阻
+6. **中断关闭**: WS2812B 发送数据时会关闭中断，确保时序准确
+7. **供电电压**: WS2812B 推荐 5V 供电，数据信号高电平应接近 VDD
+8. **电平兼容**: 如果单片机 2.5V 供电而 LED 5V 供电，建议加电平转换
+9. **ANSEL**: 所有用作数字 IO 的引脚必须清除对应的 ANSEL 位
 
 ## 文档参考
 
-- [遥控器功能说明](doc/RF433_REMOTE_SPEC.md)
-- [外设集成说明](doc/PERIPHERAL_INTEGRATION.md)
-- [踩坑记录](doc/LESSONS_LEARNED.md)
+### 开发文档
+- **[开发文档入口](README_DEV.md)** - 查看所有开发相关文档
+- **[文档索引](doc/README.md)** - 开发文档目录
+- **[踩坑记录](doc/LESSONS_LEARNED.md)** - SC8F072 特有问题和通用问题
+- **[BUG修复流程](doc/BUG_FIX_WORKFLOW.md)** - 修复 BUG 的标准流程
+- **[遥控器功能说明](doc/RF433_REMOTE_SPEC.md)**
+- **[外设集成说明](doc/PERIPHERAL_INTEGRATION.md)**
+
+### 数据手册
+- **[SC8F072数据手册](/mnt/h/072_docs/)** - 完整的芯片数据手册
+- **[开发经验手册](/mnt/h/072_docs/SC8F072_开发经验手册.md)** - 实战经验总结
+
+## 版本说明
+
+当前包含新版本灯效（7种模式），详见 [doc/NEW_EFFECTS_GUIDE.md](doc/NEW_EFFECTS_GUIDE.md)。
+
+V1.0.4 正确的时序版本 对应3535 WS2812B灯珠
+#define S0  PORTB |= (1 << PIN_WS2812B_BIT); __ws_dly = 0; __ws_dly = 0; PORTB &= ~(1 << PIN_WS2812B_BIT)
+#define S1  PORTB |= (1 << PIN_WS2812B_BIT); __ws_dly = 0; __ws_dly = 0; __ws_dly = 0; __ws_dly = 0; __ws_dly = 0; PORTB &= ~(1 << PIN_WS2812B_BIT)

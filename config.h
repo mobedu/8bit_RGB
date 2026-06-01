@@ -2,7 +2,14 @@
 #define __CONFIG_H
 
 #include <sc.h>
+
 #define USE_16MHZ        1
+#if USE_16MHZ
+#define _XTAL_FREQ       16000000UL
+#else
+#define _XTAL_FREQ       4000000UL
+#endif
+
 #define LED_COUNT        10
 
 // ========== 引脚定义 (按 PIN.md，SC8F073更新) ==========
@@ -45,7 +52,7 @@
 
 // ========== 光敏参数 ==========
 #define CDS_DARK_THRESH  1000     // 暗阈值 (ADC值)
-#define CDS_BRIGHT_THRESH 3000    // 亮阈值 (ADC值)
+#define CDS_BRIGHT_THRESH 3000    // 亮阈值
 
 // ========== 外设使能 ==========
 #define ENABLE_BATTERY_MONITOR    1
@@ -67,6 +74,11 @@ typedef struct {
     unsigned char b;
 } RGB_t;
 
+typedef struct {
+    void (*init)(void);
+    void (*update)(void);
+} Effect_t;
+
 typedef enum {
     EFFECT_SLOW_FLASH = 0,
     EFFECT_FAST_FLASH,
@@ -74,7 +86,8 @@ typedef enum {
     EFFECT_SLOW_RAINBOW,
     EFFECT_FAST_RAINBOW,
     EFFECT_POLICE_NEW,
-    EFFECT_MARQUEE_NEW
+    EFFECT_MARQUEE_NEW,
+    EFFECT_COUNT_NEW
 } EffectMode_t;
 
 extern volatile EffectMode_t current_effect;

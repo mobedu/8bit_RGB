@@ -68,7 +68,7 @@ void main(void) {
     while (1) {
         asm("clrwdt");
 
-        // 按键扫描（照抄8bit-RGB）
+        // 按键扫描
         if (PIN_KEY_READ() == 0) {
             if (!key_pressed) {
                 delay_ms(20);
